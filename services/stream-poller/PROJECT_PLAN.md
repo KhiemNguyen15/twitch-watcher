@@ -1,7 +1,7 @@
-# Twitch Watcher - Twitch Listener Microservice Plan
+# Twitch Watcher - Stream Poller Microservice Plan
 
 ## Overview
-The `twitch-listener` microservice is responsible for detecting when Twitch streams go live for specific games or streamers. It polls the Twitch API at regular intervals, detects new stream activity, and publishes structured event messages to RabbitMQ. Active streams are tracked via DragonflyDB for change detection.
+The `stream-poller` microservice is responsible for detecting when Twitch streams go live for specific games or streamers. It polls the Twitch API at regular intervals, detects new stream activity, and publishes structured event messages to RabbitMQ. Active streams are tracked via DragonflyDB for change detection.
 
 ---
 
@@ -69,9 +69,9 @@ The `twitch-listener` microservice is responsible for detecting when Twitch stre
 
 ## Folder Structure
 ```
-twitch-listener/
+stream-poller/
 ├── cmd/
-│   └── twitch-listener/        # Main application entrypoint
+│   └── stream-poller/          # Main application entrypoint
 │       └── main.go
 ├── internal/
 │   ├── poller/                 # Game and user poll logic
