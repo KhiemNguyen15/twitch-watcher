@@ -1,7 +1,7 @@
 # Twitch Watcher - Project Plan
 
 ## Overview
-Twitch Watcher is a microservice-based, event-driven application that listens for Twitch EventSub events (e.g., new streams for specified games or streamers) and sends notifications to designated Discord servers via webhooks. It features a Discord-authenticated web frontend where users can configure which streams should trigger notifications.
+Twitch Watcher is a microservice-based, event-driven application that listens for Twitch events (e.g., new streams for specified games or streamers) and sends notifications to designated Discord servers via webhooks. It features a Discord-authenticated web frontend where users can configure which streams should trigger notifications.
 
 ---
 
@@ -45,10 +45,10 @@ twitch-watcher/
 │   └── secrets/
 │
 ├── services/                # Backend microservices
-│   ├── twitch-listener/
-│   ├── webhook-manager/
+│   ├── stream-poller/
 │   ├── auth-service/
-│   └── notification-sender/
+│   ├── user-service/
+│   └── notification-dispatcher/
 │
 ├── frontend/                # React frontend app (Vite or Next.js)
 │
@@ -68,17 +68,120 @@ twitch-watcher/
 
 ---
 
+## Domain Overview
+
+### 1. Stream Discovery
+
+**Purpose**: Detect and monitor Twitch streams through polling integration.
+
+**Responsibilities**:
+- Poll Twitch API (`/helix/streams`) for stream activity.
+- Manage rate limits and pagination.
+- Emit `StreamStarted` events to RabbitMQ.
+
+**Microservices**:
+- `stream-poller`
+
+---
+
+### 2. Notification
+
+**Purpose**: Deliver stream-related alerts to users through Discord webhooks.
+
+**Responsibilities**:
+- Subscribe to `StreamStarted` events.
+- Query user preferences to find target Discord webhooks.
+- Format and send messages via Discord.
+- Handle retries or failures gracefully.
+
+**Microservices**:
+- `notification-dispatcher`
+
+---
+
+### 3. User Preferences
+
+**Purpose**: Allow users to manage which games or streamers they want to be notified about.
+
+**Responsibilities**:
+- Store tracked streamers and games per user.
+- Store Discord webhook configurations.
+- Provide a CRUD API for managing preferences.
+- Validate incoming data (e.g., valid Twitch IDs, Discord webhooks).
+
+**Microservices**:
+- `user-preferences`
+
+---
+
+### 4. Authentication
+
+**Purpose**: Authenticate and authorize users accessing the system.
+
+**Responsibilities**:
+- Authenticate users via Discord OAuth or a third-party service (e.g., Clerk).
+- Manage tokens or session validation.
+- Secure access to user-specific data and preferences.
+
+**Microservices**:
+- `auth-service` or integration with Clerk/Auth0/Firebase Auth
+
+---
+
+### 5. Web Dashboard (Optional BFF)
+
+**Purpose**: Frontend UI for users to manage their configuration.
+
+**Responsibilities**:
+- Display tracking status and logs.
+- Allow users to manage watchlist and Discord webhooks.
+- Authenticate users and secure access.
+- Use GraphQL or REST to proxy backend services.
+
+**Microservices**:
+- `graphql-api` (BFF)
+- `frontend-app` (React, Vite, etc.)
+
+---
+
+### 6. Event Bus (Infrastructure Domain)
+
+**Purpose**: Enable asynchronous communication between services.
+
+**Responsibilities**:
+- Route events like `StreamStarted`, `StreamEnded`, `DeliveryFailed`.
+- Allow microservices to publish/subscribe without tight coupling.
+- Ensure reliability and delivery guarantees.
+
+**Technology**:
+- RabbitMQ
+
+---
+
+### Domain-to-Service Mapping Summary
+
+| Domain             | Purpose                       | Microservice(s)                      |
+|--------------------|-------------------------------|--------------------------------------|
+| Stream Discovery   | Detect live streams           | `stream-poller`                      |
+| Notification       | Deliver alerts                | `notification-dispatcher`            |
+| User Preferences   | Manage user watchlists        | `user-service`                       |
+| Authentication     | User auth and access control  | `auth-service` or 3rd-party auth     |
+| Web Dashboard      | UI and frontend gateway       | `graphql-api`, `frontend-app`        |
+| Event Bus          | Event communication layer     | RabbitMQ (infrastructure component)  |
+
+---
+
 ## Core Microservices
 
 1. **Twitch Listener**
-   - Handles Twitch EventSub webhook callbacks
+   - Polls Twitch API for new stream events
    - Validates & forwards events into RabbitMQ
 
 2. **Notification Dispatcher**
    - Listens to RabbitMQ
    - Sends Discord webhook messages
    
-3. **Webhook Manager**
+3. **User Service**
    - Stores user configuration (e.g., target game/streamer, Discord webhook)
    - Manages webhook creation/deletion
 
@@ -100,7 +203,6 @@ twitch-watcher/
 - [ ] View/manage existing webhooks
 - [ ] Subscribe to Twitch streams by streamer or game
 - [ ] Discord webhook notification setup
-- [ ] Persistent Twitch EventSub subscriptions
 - [ ] Real-time event propagation via RabbitMQ
 
 ---
