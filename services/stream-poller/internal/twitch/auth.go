@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"sync"
@@ -36,15 +37,16 @@ func (tm *TokenManager) GetAccessToken() (string, error) {
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
 
+	// Use cached token
 	if time.Now().Before(tm.expiry) && tm.accessToken != "" {
 		return tm.accessToken, nil
 	}
 
+	// Fetch new token
 	token, expiry, err := tm.fetchNewToken()
 	if err != nil {
 		return "", err
 	}
-
 	tm.accessToken = token
 	tm.expiry = time.Now().Add(expiry)
 
@@ -64,7 +66,7 @@ func (tm *TokenManager) fetchNewToken() (string, time.Duration, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", 0, err
@@ -72,12 +74,14 @@ func (tm *TokenManager) fetchNewToken() (string, time.Duration, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", 0, fmt.Errorf("failed to fetch token: status %d", resp.StatusCode)
+		// Attempt to read body for detailed error messages from Twitch
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return "", 0, fmt.Errorf("failed to fetch token: status %d, body: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var tr tokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tr); err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("failed to decode token response: %w", err)
 	}
 
 	if tr.AccessToken == "" {

@@ -16,6 +16,7 @@ func main() {
 
 	level, err := zerolog.ParseLevel(cfg.LogLevel)
 	if err != nil {
+		// Default to InfoLevel
 		level = zerolog.InfoLevel
 	}
 	zerolog.SetGlobalLevel(level)
@@ -41,6 +42,9 @@ func main() {
 	log.Info().Msg("Fetched Twitch access token")
 
 	// DEBUG: Test the access token
+	// This section makes a simple API call to verify the obtained access token is valid.
+	// TODO: Replace this debug block with the actual stream polling logic.
+	// ================= BEGIN DEBUG BLOCK =================
 	req, err := http.NewRequest(http.MethodGet, "https://api.twitch.tv/helix/streams", nil)
 	if err != nil {
 		log.Fatal().
@@ -65,4 +69,5 @@ func main() {
 			Msg("Unexpected status code")
 	}
 	log.Info().Msg("Successfully fetched Twitch streams")
+	// ================== END DEBUG BLOCK ==================
 }
