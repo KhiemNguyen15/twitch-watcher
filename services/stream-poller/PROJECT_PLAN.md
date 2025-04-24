@@ -70,9 +70,6 @@ The `stream-poller` microservice is responsible for detecting when Twitch stream
 ## Folder Structure
 ```
 stream-poller/
-├── cmd/
-│   └── stream-poller/          # Main application entrypoint
-│       └── main.go
 ├── internal/
 │   ├── poller/                 # Game and user poll logic
 │   │   ├── game.go
@@ -87,6 +84,7 @@ stream-poller/
 │   └── config/                 # Config loading and validation
 │       └── env.go
 ├── Dockerfile
+├── main.go                     # Main application entrypoint
 ├── go.mod
 ├── go.sum
 └── README.md
