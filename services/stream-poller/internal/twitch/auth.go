@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+var fetchURL = "https://id.twitch.tv/oauth2/token"
+
 type TokenManager struct {
 	clientID     string
 	clientSecret string
@@ -50,15 +52,13 @@ func (tm *TokenManager) GetAccessToken() (string, error) {
 }
 
 func (tm *TokenManager) fetchNewToken() (string, time.Duration, error) {
-	url := "https://id.twitch.tv/oauth2/token"
-
 	data := fmt.Sprintf(
 		"client_id=%s&client_secret=%s&grant_type=client_credentials",
 		tm.clientID,
 		tm.clientSecret,
 	)
 
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(data))
+	req, err := http.NewRequest(http.MethodPost, fetchURL, strings.NewReader(data))
 	if err != nil {
 		return "", 0, err
 	}
