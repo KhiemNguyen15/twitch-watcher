@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -56,8 +57,8 @@ func (tm *TokenManager) GetAccessToken() (string, error) {
 func (tm *TokenManager) fetchNewToken() (string, time.Duration, error) {
 	data := fmt.Sprintf(
 		"client_id=%s&client_secret=%s&grant_type=client_credentials",
-		tm.clientID,
-		tm.clientSecret,
+		url.QueryEscape(tm.clientID),
+		url.QueryEscape(tm.clientSecret),
 	)
 
 	req, err := http.NewRequest(http.MethodPost, fetchURL, strings.NewReader(data))
