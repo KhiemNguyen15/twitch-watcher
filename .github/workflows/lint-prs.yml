@@ -22,13 +22,7 @@ jobs:
         run: |
           npm install --global @commitlint/cli @commitlint/config-conventional
 
-      - name: Check if PR title changed
-        id: titlecheck
-        run: |
-          echo "TITLE_CHANGED=${{ github.event.changes.title != null }}" >> $GITHUB_ENV
-
       - name: Lint PR title
-        if: env.TITLE_CHANGED == "true"
         run: |
           echo "$PR_TITLE" | commitlint
         env:
