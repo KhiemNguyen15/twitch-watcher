@@ -24,4 +24,6 @@ jobs:
 
       - name: Lint PR title
         run: |
-          echo "${{ github.event.pull_request.title }}" | commitlint
+          echo "$PR_TITLE" | commitlint
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
