@@ -7,19 +7,23 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/khiemnguyen15/twitch-watcher/pkg/models"
-	"github.com/khiemnguyen15/twitch-watcher/services/stream-filter/internal/publisher"
 )
 
 const seenTTL = 26 * time.Hour
 
+// notificationPublisher is the interface Filter uses to publish payloads.
+type notificationPublisher interface {
+	Publish(ctx context.Context, payload models.NotificationPayload) error
+}
+
 // Filter deduplicates StreamEvents via Valkey SETNX and fans out NotificationPayloads.
 type Filter struct {
 	cache     *redis.Client
-	publisher *publisher.Publisher
+	publisher notificationPublisher
 }
 
 // New creates a Filter.
-func New(cache *redis.Client, pub *publisher.Publisher) *Filter {
+func New(cache *redis.Client, pub notificationPublisher) *Filter {
 	return &Filter{cache: cache, publisher: pub}
 }
 

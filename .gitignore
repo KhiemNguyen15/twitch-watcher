@@ -1,5 +1,4 @@
 .todos/
-go.work.sum
 *.env
 *.local
 /bin/
