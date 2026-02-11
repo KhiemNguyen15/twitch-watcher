@@ -1,0 +1,6 @@
+apiVersion: v2
+name: stream-poller
+description: Twitch Watcher — polls Twitch API and publishes stream events
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

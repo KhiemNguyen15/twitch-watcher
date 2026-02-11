@@ -1,0 +1,6 @@
+apiVersion: v2
+name: stream-filter
+description: Twitch Watcher — deduplicates stream events and fans out notifications
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

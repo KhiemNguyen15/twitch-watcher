@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/khiemnguyen15/twitch-watcher/stream-filter
+  pullPolicy: IfNotPresent
+  tag: ""
+
+env:
+  NATS_URL: "nats://nats:4222"
+  VALKEY_ADDR: "valkey-primary:6379"
+
+envFrom:
+  - secretRef:
+      name: valkey-secret
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 32Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi

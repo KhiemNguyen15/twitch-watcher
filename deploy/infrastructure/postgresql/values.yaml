@@ -1,0 +1,17 @@
+# Helm chart: bitnami/postgresql
+# Install: helm upgrade --install postgresql bitnami/postgresql -n twitch-watcher -f deploy/infrastructure/postgresql/values.yaml
+
+auth:
+  existingSecret: postgresql-secret
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
+  database: twitch_watcher
+  username: twitch_watcher
+
+primary:
+  persistence:
+    enabled: true
+    size: 10Gi
+  initdb:
+    scriptsConfigMap: ""

@@ -1,0 +1,17 @@
+# Helm chart: nats/nats
+# Install: helm upgrade --install nats nats/nats -n twitch-watcher -f deploy/infrastructure/nats/values.yaml
+
+config:
+  cluster:
+    enabled: true
+    replicas: 3
+  jetstream:
+    enabled: true
+    fileStore:
+      enabled: true
+      pvc:
+        enabled: true
+        size: 10Gi
+
+natsBox:
+  enabled: false

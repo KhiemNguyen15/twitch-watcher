@@ -1,0 +1,14 @@
+# Helm chart: bitnami/valkey
+# Install: helm upgrade --install valkey bitnami/valkey -n twitch-watcher -f deploy/infrastructure/valkey/values.yaml
+
+architecture: standalone
+
+auth:
+  enabled: true
+  existingSecret: valkey-secret
+  existingSecretPasswordKey: password
+
+primary:
+  persistence:
+    enabled: true
+    size: 5Gi

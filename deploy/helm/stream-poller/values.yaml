@@ -1,0 +1,31 @@
+replicaCount: 1
+
+strategy:
+  type: Recreate
+
+image:
+  repository: ghcr.io/khiemnguyen15/twitch-watcher/stream-poller
+  pullPolicy: IfNotPresent
+  tag: ""
+
+env:
+  POLL_INTERVAL_SECONDS: "60"
+  SUBSCRIPTION_SVC_URL: "http://subscription-service:8080"
+  NATS_URL: "nats://nats:4222"
+  VALKEY_ADDR: "valkey-primary:6379"
+
+envFrom:
+  - secretRef:
+      name: twitch-credentials
+  - secretRef:
+      name: internal-api-key
+  - secretRef:
+      name: valkey-secret
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi

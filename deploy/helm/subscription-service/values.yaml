@@ -1,0 +1,27 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/khiemnguyen15/twitch-watcher/subscription-service
+  pullPolicy: IfNotPresent
+  tag: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env:
+  HTTP_ADDR: ":8080"
+
+envFrom:
+  - secretRef:
+      name: postgresql-secret
+  - secretRef:
+      name: internal-api-key
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
