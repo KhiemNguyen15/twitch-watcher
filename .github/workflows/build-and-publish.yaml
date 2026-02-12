@@ -24,16 +24,10 @@ jobs:
           cache: true
 
       - name: Build all services
-        env:
-          GOEXPERIMENT: jsonv2
-        run: |
-          GOWORK=${{ github.workspace }}/go.work go build ./...
+        run: make build
 
       - name: Run tests
-        env:
-          GOEXPERIMENT: jsonv2
-        run: |
-          GOWORK=${{ github.workspace }}/go.work go test ./...
+        run: make test
 
   publish:
     name: Publish Images
