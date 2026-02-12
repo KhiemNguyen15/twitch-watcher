@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/khiemnguyen15/twitch-watcher/pkg/models"
 	"github.com/khiemnguyen15/twitch-watcher/services/subscription-service/internal/service"
 )
@@ -41,11 +42,11 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidWebhook):
-			writeJSON(w, http.StatusBadRequest, errorResponse{Error: err.Error()})
+			writeJSON(w, http.StatusBadRequest, errorResponse{Error: "invalid Discord webhook URL"})
 		case errors.Is(err, service.ErrDuplicate):
 			writeJSON(w, http.StatusConflict, errorResponse{Error: "subscription already exists"})
 		default:
-			writeJSON(w, http.StatusBadRequest, errorResponse{Error: err.Error()})
+			writeJSON(w, http.StatusBadRequest, errorResponse{Error: "invalid request"})
 		}
 		return
 	}
@@ -56,6 +57,10 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 // GetByID handles GET /v1/subscriptions/{id}.
 func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+	if _, err := uuid.Parse(id); err != nil {
+		writeJSON(w, http.StatusBadRequest, errorResponse{Error: "invalid subscription ID"})
+		return
+	}
 
 	sub, err := h.svc.GetByID(r.Context(), id)
 	if err != nil {
@@ -73,6 +78,10 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 // Delete handles DELETE /v1/subscriptions/{id}.
 func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+	if _, err := uuid.Parse(id); err != nil {
+		writeJSON(w, http.StatusBadRequest, errorResponse{Error: "invalid subscription ID"})
+		return
+	}
 
 	if err := h.svc.Delete(r.Context(), id); err != nil {
 		if errors.Is(err, service.ErrNotFound) {

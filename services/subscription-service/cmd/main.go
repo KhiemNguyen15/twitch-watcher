@@ -46,11 +46,12 @@ func main() {
 	router := api.NewRouter(svc, cfg.InternalAPIKey)
 
 	srv := &http.Server{
-		Addr:         cfg.HTTPAddr,
-		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		Addr:           cfg.HTTPAddr,
+		Handler:        http.MaxBytesHandler(router, 1<<20), // 1 MB body limit
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		IdleTimeout:    60 * time.Second,
+		MaxHeaderBytes: 1 << 13, // 8 KB
 	}
 
 	go func() {
