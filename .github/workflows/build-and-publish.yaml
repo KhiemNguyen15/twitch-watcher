@@ -29,22 +29,48 @@ jobs:
       - name: Run tests
         run: make test
 
-  publish:
-    name: Publish Images
+  changes:
+    name: Detect changed services
     runs-on: ubuntu-latest
-    needs: build
     if: github.event_name != 'pull_request'
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            subscription-service:
+              - 'services/subscription-service/**'
+              - 'pkg/**'
+              - 'go.work'
+            stream-poller:
+              - 'services/stream-poller/**'
+              - 'pkg/**'
+              - 'go.work'
+            stream-filter:
+              - 'services/stream-filter/**'
+              - 'pkg/**'
+              - 'go.work'
+            notification-dispatcher:
+              - 'services/notification-dispatcher/**'
+              - 'pkg/**'
+              - 'go.work'
+
+  publish:
+    name: Publish ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    needs: [build, changes]
+    if: needs.changes.outputs.services != '[]'
     permissions:
       contents: read
       packages: write
 
     strategy:
       matrix:
-        service:
-          - subscription-service
-          - stream-poller
-          - stream-filter
-          - notification-dispatcher
+        service: ${{ fromJson(needs.changes.outputs.services) }}
 
     steps:
       - uses: actions/checkout@v4
