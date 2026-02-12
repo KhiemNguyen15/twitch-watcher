@@ -2,8 +2,8 @@ go 1.25.0
 
 use (
 	./pkg
+	./services/notification-dispatcher
+	./services/stream-filter
+	./services/stream-poller
 	./services/subscription-service
-	/home/khiem/projects/twitch-watcher/services/notification-dispatcher
-	/home/khiem/projects/twitch-watcher/services/stream-filter
-	/home/khiem/projects/twitch-watcher/services/stream-poller
 )
