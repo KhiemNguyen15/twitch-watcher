@@ -1,3 +1,7 @@
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/khiemnguyen15/twitch-watcher/pkg v0.0.0-20260214045458-3c626ebe510c h1:Y6oj91b/RfYWOhxg6wpkhPgpOP1vEkEZi/ORne7zv8s=
+github.com/khiemnguyen15/twitch-watcher/pkg v0.0.0-20260214045458-3c626ebe510c/go.mod h1:v2jCC+htbDzWdUHArqpbqx76l+Ku1mzc1TvP5B+Hm4g=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
 github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
 github.com/nats-io/nats.go v1.48.0 h1:pSFyXApG+yWU/TgbKCjmm5K4wrHu86231/w84qRVR+U=

@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
+	github.com/khiemnguyen15/twitch-watcher/pkg v0.0.0-20260214045458-3c626ebe510c
 )
 
 require (
